@@ -1,11 +1,8 @@
 /*
-   Created by Pi BOTS MakerHub
-
-   Email: pibotsmakerhub@gmail.com
-
-   Github: https://github.com/pibotsmakerhub
-
-   Copyright (c) 2020 Pi BOTS MakerHub
+   Created by Pawan Meena
+   Email: pavanmaran19199@gmail.com
+   Website : iotinns.in
+   Copyright (c) 2021 IoTinns Bot
 */
 
 
@@ -15,8 +12,8 @@
 
 
 
-#define FIREBASE_HOST "espfire-fd8af.firebaseio.com/" //Without http:// or https:// schemes
-#define FIREBASE_AUTH "dAPRgic0jbEIiyHx4ecdB7TWwF92eZftMipSE7f0"
+#define FIREBASE_HOST "fir-all-9d29a-default-rtdb.firebaseio.com" //Without http:// or https:// schemes
+#define FIREBASE_AUTH "OhQ0hID5jGItUlN8ea5jCtNlcs4Q2XvZNGZzuAAu"
 #define WIFI_SSID "Engineer29"
 #define WIFI_PASSWORD "76919716"
 
@@ -28,12 +25,12 @@
  */
 /*
 #define DHTPIN 2    // Connect Data pin of DHT to D2
-int led = D5;     // Connect LED to D5
-
+    // Connect LED to D5
 #define DHTTYPE    DHT11
 DHT dht(DHTPIN, DHTTYPE);
 */
 //Define FirebaseESP8266 data object
+int led = D0; 
 FirebaseData firebaseData;
 FirebaseData ledData;
 
@@ -44,10 +41,8 @@ void setup()
 {
   Serial.begin(9600);
   pinMode(A0, INPUT); 
+  pinMode(BUILTIN_LED, OUTPUT); 
 
-  
-
-  
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Connecting to Wi-Fi");
   while (WiFi.status() != WL_CONNECTED)
@@ -62,9 +57,7 @@ void setup()
 
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
   Firebase.reconnectWiFi(true);
-
 }
-
 void sensorUpdate(){
  int Moisture = A0;
  int soil_moisture = analogRead(Moisture);   // read moisture sensor
@@ -73,7 +66,7 @@ void sensorUpdate(){
   Serial.println(soil_moisture);
  delay(2000);
  
-if (Firebase.setFloat(firebaseData, "/ESPfire/moisture",soil_moisture))
+if (Firebase.setFloat(firebaseData, "/def_strings/sensors/sensor2",soil_moisture))
   {
     Serial.println("PASSED");
     Serial.println("PATH: " + firebaseData.dataPath());
@@ -91,17 +84,22 @@ if (Firebase.setFloat(firebaseData, "/ESPfire/moisture",soil_moisture))
   }
 
 }
-void loop() {
-  sensorUpdate();
-  /*
-  if (Firebase.getString(ledData, "/FirebaseIOT/led")){
-    Serial.println(ledData.stringData());
-    if (ledData.stringData() == "1") {
-    digitalWrite(led, HIGH);
+void ledf()
+{
+  Serial.println("led value :"+ledData.stringData());
+  if (Firebase.getInt(ledData, "/def_strings/Sensor4")){
+    Serial.println(ledData.intData());
+    if (ledData.intData() == 1) {
+    digitalWrite(BUILTIN_LED, HIGH);
     }
-  else if (ledData.stringData() == "0"){
-    digitalWrite(led, LOW);
+  else if (ledData.intData() == 0){
+    digitalWrite(BUILTIN_LED, LOW);
     }
-  } */
+  } 
   delay(500); 
+  }
+  void loop() {
+  sensorUpdate();
+  ledf();
+  
 }
